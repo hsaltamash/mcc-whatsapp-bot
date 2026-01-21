@@ -5,8 +5,8 @@ import os, glob
 
 from openai import OpenAI
 import chromadb
-from chromaDdb.utils import embedding_functions
-
+from chromadb.utils import embedding_functions
+ 
 app = FastAPI()
 
 # ---- CONFIG ----
@@ -38,7 +38,9 @@ embed_fn = embedding_functions.OpenAIEmbeddingFunction(
 kb = chroma.get_or_create_collection("mcc_kb", embedding_function=embed_fn)
 
 def ingest_kb():
-    kb.delete(where={})
+    all_ids = kb.get()["ids"]
+    if all_ids:
+        kb.delete(ids=all_ids)
     files = glob.glob("kb/*.md")
     i = 0
     for f in files:
